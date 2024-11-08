@@ -70,7 +70,7 @@ function Login() {
                     </div>
                     <div className="form-group">
                         <button className="btn btn-block">
-                            Submit  
+                            Sign in  
                         </button>
                     </div>
                 </form>
