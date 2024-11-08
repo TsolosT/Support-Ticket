@@ -3,11 +3,7 @@ import noteService from './noteService';
 import { extractErrorMessage } from '../../utils/errorHandler';
 
 const initialState = {
-    notes: [],
-    isError: false,
-    isSuccess: false,
-    isLoading: false,
-    message: ''
+    notes: null,
 };
 
 // Get ticket notes
@@ -45,30 +41,13 @@ export const noteSlice = createSlice({
     extraReducers: (builder) => {
         builder 
         .addCase(getNotes.pending, (state) => {
-            state.isLoading = true;
+            state.notes = null;
         })
         .addCase(getNotes.fulfilled, (state, action) => {
-            state.isLoading = false;
-            state.isSuccess = true;
             state.notes = action.payload;
         })
-        .addCase(getNotes.rejected, (state, action) => {
-            state.isLoading = false;
-            state.isError = true;
-            state.message = action.payload;
-        })
-        .addCase(createNote.pending, (state) => {
-            state.isLoading = true;
-        })
         .addCase(createNote.fulfilled, (state, action) => {
-            state.isLoading = false;
-            state.isSuccess = true;
             state.notes.push(action.payload);
-        })
-        .addCase(createNote.rejected, (state, action) => {
-            state.isLoading = false;
-            state.isError = true;
-            state.message = action.payload;
         })
     }
 });

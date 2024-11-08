@@ -3,12 +3,8 @@ import ticketService from './ticketService';
 import { extractErrorMessage } from '../../utils/errorHandler';
 
 const initialState = {
-    tickets: [],
-    ticket: {},
-    isError: false,
-    isSuccess: false,
-    isLoading: false,
-    message: '',
+    tickets: null,
+    ticket: null,
 };
 
 // Create new ticket
@@ -75,47 +71,16 @@ export const ticketSlice = createSlice({
     },
     extraReducers: (builder) => {
         builder
-            .addCase(createTicket.pending, (state) =>{
-                state.isLoading = true;
-            })
-            .addCase(createTicket.fulfilled, (state) =>{
-                state.isLoading = false;
-                state.isSuccess = true;
-            })
-            .addCase(createTicket.rejected, (state, action) =>{
-                state.isLoading = false;
-                state.isError = true,
-                state.message = action.payload
-            })
             .addCase(getTickets.pending, (state) =>{
-                state.isLoading = true;
+                state.ticket = null;
             })
             .addCase(getTickets.fulfilled, (state, action) =>{
-                state.isLoading = false;
-                state.isSuccess = true;
                 state.tickets = action.payload;
             })
-            .addCase(getTickets.rejected, (state, action) =>{
-                state.isLoading = false;
-                state.isError = true,
-                state.message = action.payload
-            })
-            .addCase(getTicket.pending, (state) =>{
-                state.isLoading = true;
-            })
             .addCase(getTicket.fulfilled, (state, action) =>{
-                state.isLoading = false;
-                state.isSuccess = true;
                 state.ticket = action.payload;
             })
-            .addCase(getTicket.rejected, (state, action) =>{
-                state.isLoading = false;
-                state.isError = true,
-                state.message = action.payload
-            })
-            .addCase(closeTicket.fulfilled, (state, action) =>{
-                state.isLoading = false;
-                state.isSuccess = true;
+            .addCase(closeTicket.fulfilled, (state, action) =>{;
                 state.tickets.map((ticket) => 
                     ticket._id === action.payload
                     ?  (ticket.status = 'closed')

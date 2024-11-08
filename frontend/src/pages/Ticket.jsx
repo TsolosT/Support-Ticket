@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';;
 import { useSelector, useDispatch } from 'react-redux';
 import { getTicket, closeTicket } from '../features/tickets/ticketSlice';
-import { getNotes, createNote, reset as notesReset } from '../features/notes/noteSlice';
+import { getNotes, createNote } from '../features/notes/noteSlice';
 import { useParams, useNavigate } from 'react-router-dom';
 import BackButton from '../components/BackButton';
 import Spinner from '../components/Spinner';
@@ -30,52 +30,45 @@ function Ticket() {
     const [ modalIsOpen, setModalIsOpen ] = useState(false);
     const [ noteText, setNoteText ] = useState('');
 
-    const { ticket, isLoading, isSuccess, isError, message} = useSelector((state) => state.tickets);
-    const { notes, isLoading: noteIsLoading} = useSelector((state) => state.notes);
+    const { ticket } = useSelector((state) => state.tickets);
+    const { notes } = useSelector((state) => state.notes);
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const {id} = useParams(); // ticket id
 
     useEffect(() => {
-            if (isError) {
-                toast.error(message);
-            }
-            dispatch(getTicket(id));
-            dispatch(getNotes(id));
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-        }, [isError, message, id]
-    );
+        dispatch(getTicket(id)).unwrap().catch(toast.error);
+        dispatch(getNotes(id)).unwrap().catch(toast.error);
+    }, [id, dispatch]);
     // Close ticket
     const onTicketClose = () => {
-        dispatch(closeTicket(id));
-        toast.success('Ticket Closed');
-        navigate('/tickets');
+        dispatch(closeTicket(id))
+        .unwrap()
+        .then(() => {
+            toast.success('Ticket Closed')
+            navigate('/tickets')
+        })
+        .catch(toast.error);
     };
     // Create note submit
     const onNoteSubmit = (e) => {
         e.preventDefault();
-        dispatch(createNote({ noteText, ticketId: id }));
-        setNoteText('');
-        closeModal();
+        dispatch(createNote({ noteText, ticketId: id }))
+        .unwrap()
+        .then(() => {
+            setNoteText('');
+            closeModal();
+        })
+        .catch(toast.error);
     };
      // Open/close modal
     const openModal = () => setModalIsOpen(true);
     const closeModal = () => setModalIsOpen(false);
 
 
-    if (isLoading || noteIsLoading) {
-        return <Spinner/>;
-    }
-    if (isError) {
-        return (
-            <>
-                <section className="heading">
-                    <h1>Something went wrong</h1>
-                    <p>Try again in few minutes.</p>
-                </section>
-            </>
-        );
+    if (!ticket) {
+        return <Spinner />
     }
     return (
         <div className="ticket-page">
@@ -133,9 +126,12 @@ function Ticket() {
             </Modal>
 
 
-            {notes.map((note) => (
-                <NoteItem key={note._id} note={note} />
-            ))}
+            {notes ? (
+                    notes.map((note) => (
+                        <NoteItem key={note._id} note={note} />
+                    ))
+                ) : <Spinner/>
+            }
             {ticket.status !== 'closed' && (
                 <button className="btn btn-block btn-danger" onClick={onTicketClose}>Close Ticket</button>
             )}
