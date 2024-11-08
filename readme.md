@@ -7,7 +7,7 @@ A full-stack support ticket system built with React, Redux, Node.js, Express, an
 
 ## Live Preview
 
-Check out the live version of the app here: [Support Ticket App](https://github-finder-inky-ten.vercel.app/)
+Check out the live version of the app here: Soon will be deployed
 
 ## Features
 
