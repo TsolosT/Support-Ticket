@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { FaSignInAlt } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import { useSelector, useDispatch } from 'react-redux';
-import { login, reset } from '../features/auth/authSlice';
+import { login } from '../features/auth/authSlice';
 import Spinner from '../components/Spinner';
 import { useNavigate } from 'react-router-dom';
 
@@ -16,20 +16,7 @@ function Login() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    const  { user, isLoading, isError, isSuccess, message} = useSelector(state => state.auth);
-
-    useEffect(() => {
-        // Check for error
-        if (isError) {
-            toast.error(message);
-        }
-        // Redirect when logged in
-        if (isSuccess || user) {
-            navigate('/');
-        }
-        dispatch(reset());
-    }, [isError, isSuccess, user, message, dispatch, navigate]);
-
+    const  { isLoading } = useSelector(state => state.auth);
 
     //On input change
     const onChange = (e) => {
@@ -45,7 +32,13 @@ function Login() {
             email,
             password
         };
-        dispatch(login(userData));
+        dispatch(login(userData))
+            .unwrap()
+            .then((user) => {
+                toast.success(`Welcome again ${user.name}`);
+                navigate('/');
+            })
+            .catch(toast.error);
     };
 
     if (isLoading) {
@@ -76,7 +69,7 @@ function Login() {
                 </form>
             </section>
         </>
-    )
-}
+    );
+};
 
-export default Login
+export default Login;

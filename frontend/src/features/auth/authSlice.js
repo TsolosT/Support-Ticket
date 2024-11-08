@@ -8,10 +8,7 @@ const user = JSON.parse(localStorage.getItem('user'));
 
 const initialState = { 
     user: user ? user : null,
-    isError: false,
-    isSuccess: false,
-    isLoading: false,
-    message: ''
+    isLoading: false
 };
 // Register new user
 export const register = createAsyncThunk(
@@ -49,9 +46,6 @@ export const authSlice = createSlice({
     reducers: {
         reset: (state) => {
             state.isLoading = false;
-            state.isError = false;
-            state.isSuccess = false;
-            state.message = '';
         },
     },
     extraReducers: (builder) => {
@@ -61,15 +55,10 @@ export const authSlice = createSlice({
             })
             .addCase(register.fulfilled, (state, action) => {
                 state.isLoading = false;
-                state.isSuccess = true;
-                state.isError = false;
                 state.user = action.payload;
             })
-            .addCase(register.rejected, (state, action) => {
+            .addCase(register.rejected, (state) => {
                 state.isLoading = false;
-                state.isError = true;
-                state.message = action.payload;
-                state.user = null;
             })
             .addCase(logout.fulfilled, (state) => {
                 state.user = null;
@@ -79,15 +68,10 @@ export const authSlice = createSlice({
             })
             .addCase(login.fulfilled, (state, action) => {
                 state.isLoading = false;
-                state.isSuccess = true;
-                state.isError = false;
                 state.user = action.payload;
             })
-            .addCase(login.rejected, (state, action) => {
+            .addCase(login.rejected, (state) => {
                 state.isLoading = false;
-                state.isError = true;
-                state.message = action.payload;
-                state.user = null;
             })
     }
 });
