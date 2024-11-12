@@ -9,6 +9,12 @@ A full-stack support ticket system built with React, Redux, Node.js, Express, an
 
 Check out the live version of the app here:[Support Ticket App](https://support-ticket-liart.vercel.app/)
 
+```bash
+    #Test User:
+    email: test4app@gmail.com 
+    password: 123456
+```
+
 ## Features
 
 - **User Authentication**: Secure JWT-based login and registration.
